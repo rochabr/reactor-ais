@@ -1,0 +1,142 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "HTTP": {
+                "type": "Http",
+                "inputs": {
+                    "uri": "https://frs-openai-eastus.openai.azure.com/openai/deployments/gpt-35-turbo/chat/completions?api-version=2023-03-15-preview",
+                    "method": "POST",
+                    "headers": {
+                        "Api-Key": "",
+                        "Content-Type": "application/json"
+                    },
+                    "body": {
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": "You are an AI assistant that helps people find information.You are an AI assistant that helps people by creating meaningful and deep quotes with any given keywords."
+                            },
+                            {
+                                "role": "user",
+                                "content": "Please create a quote for me with the keywords \"@{triggerBody()?['keywords']}\". Don't explain what you are doing, just send me the quote."
+                            }
+                        ],
+                        "max_tokens": 100
+                    }
+                },
+                "runAfter": {},
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                }
+            },
+            "Parse_JSON": {
+                "type": "ParseJson",
+                "inputs": {
+                    "content": "@body('HTTP')",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "object": {
+                                "type": "string"
+                            },
+                            "created": {
+                                "type": "integer"
+                            },
+                            "model": {
+                                "type": "string"
+                            },
+                            "choices": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "index": {
+                                            "type": "integer"
+                                        },
+                                        "finish_reason": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "object",
+                                            "properties": {
+                                                "role": {
+                                                    "type": "string"
+                                                },
+                                                "content": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "index",
+                                        "finish_reason",
+                                        "message"
+                                    ]
+                                }
+                            },
+                            "usage": {
+                                "type": "object",
+                                "properties": {
+                                    "completion_tokens": {
+                                        "type": "integer"
+                                    },
+                                    "prompt_tokens": {
+                                        "type": "integer"
+                                    },
+                                    "total_tokens": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "runAfter": {
+                    "HTTP": [
+                        "SUCCEEDED"
+                    ]
+                }
+            },
+            "Response": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                    "statusCode": 200,
+                    "body": "@body('Parse_JSON')?['choices']"
+                },
+                "runAfter": {
+                    "Parse_JSON": [
+                        "SUCCEEDED"
+                    ]
+                }
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "CreateQuote": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "keywords": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {}
+    },
+    "kind": "Stateful"
+}
