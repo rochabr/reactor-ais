@@ -45,7 +45,7 @@ The deployments table displays a new entry that corresponds to this newly create
 
 To call our model via REST API from the Logic App, we need to copy the endpoint and key.\
 
-1. Navigate to the OpenAI Settings page on Azure AI Studios' up right corner (cog icon).
+1. Navigate to the OpenAI Settings page on Azure AI Studios' up right corner (cog icon). Click the *Resource* tab.
 2. Select your resource and copy the *endpoint* value.
 3. Click the eye icon on the Key column and copy the *key* value.
 
@@ -163,5 +163,3 @@ If you're not going to continue to use this application, you can delete all your
 2. Search for your *Resource Group* name from the top search bar. Open it.
 4. Click **Delete resource group**.
 5. Type the name of your resource group at the input box and click *Delete*.
-
-
