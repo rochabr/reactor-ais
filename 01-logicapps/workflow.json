@@ -1,0 +1,397 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Create_Quote": {
+                "inputs": {
+                    "body": {
+                        "max_tokens": 100,
+                        "messages": [
+                            {
+                                "content": "You are an AI assistant that helps people by creating original, meaningful and deep quotes from keywords.",
+                                "role": "system"
+                            },
+                            {
+                                "content": "Please create an original inpirational quote for me using the following keywords: @{triggerBody()?['keywords']}. It has to be created by you and not from an author. Don't explain what you are doing, just send me the quote.",
+                                "role": "user"
+                            }
+                        ]
+                    },
+                    "headers": {
+                        "Api-Key": "@variables('openai-key')",
+                        "Content-Type": "application/json"
+                    },
+                    "method": "POST",
+                    "uri": "@{variables('openai-endpoint')}/openai/deployments/@{variables('openai-model')}/chat/completions?api-version=2023-03-15-preview"
+                },
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "runtimeConfiguration": {
+                    "contentTransfer": {
+                        "transferMode": "Chunked"
+                    }
+                },
+                "type": "Http"
+            },
+            "Create_image_from_quote": {
+                "inputs": {
+                    "body": {
+                        "n": 1,
+                        "prompt": " @{variables('quote')}",
+                        "size": "1024x1024"
+                    },
+                    "headers": {
+                        "Accept": "application/json, text/plain, */*",
+                        "Api-Key": "@variables('openai-key')"
+                    },
+                    "method": "POST",
+                    "uri": "@{variables('openai-endpoint')}/openai/images/generations:submit?api-version=2023-06-01-preview"
+                },
+                "runAfter": {
+                    "Set_quote": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "Get_image_id_from_JSON_Response": {
+                "inputs": {
+                    "content": "@body('Create_image_from_quote')",
+                    "schema": {
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Create_image_from_quote": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            },
+            "Get_image_url_from_JSON_Response": {
+                "inputs": {
+                    "content": "@body('Get_image')",
+                    "schema": {
+                        "properties": {
+                            "created": {
+                                "type": "integer"
+                            },
+                            "expires": {
+                                "type": "integer"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "result": {
+                                "properties": {
+                                    "created": {
+                                        "type": "integer"
+                                    },
+                                    "data": {
+                                        "items": {
+                                            "properties": {
+                                                "url": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "url"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "status": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Until": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            },
+            "Initialize_Api_Key": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "openai-key",
+                            "type": "string",
+                            "value": "<OPENAI_KEY>"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Initialize_endpoint": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "openai-endpoint",
+                            "type": "string",
+                            "value": "<OPENAI_ENDPOINT>"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_Api_Key": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "openai-model",
+                            "type": "string",
+                            "value": "<OPENAI_MODEL>"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_endpoint": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Parse_quote_from_JSON_Response": {
+                "inputs": {
+                    "content": "@body('Create_Quote')",
+                    "schema": {
+                        "properties": {
+                            "choices": {
+                                "items": {
+                                    "properties": {
+                                        "finish_reason": {
+                                            "type": "string"
+                                        },
+                                        "index": {
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "properties": {
+                                                "content": {
+                                                    "type": "string"
+                                                },
+                                                "role": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "required": [
+                                        "index",
+                                        "finish_reason",
+                                        "message"
+                                    ],
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            },
+                            "created": {
+                                "type": "integer"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "model": {
+                                "type": "string"
+                            },
+                            "object": {
+                                "type": "string"
+                            },
+                            "usage": {
+                                "properties": {
+                                    "completion_tokens": {
+                                        "type": "integer"
+                                    },
+                                    "prompt_tokens": {
+                                        "type": "integer"
+                                    },
+                                    "total_tokens": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Create_Quote": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            },
+            "Response": {
+                "inputs": {
+                    "body": {
+                        "image": "@body('Get_image_url_from_JSON_Response')?['result']?['data'][0]['url']",
+                        "quote": "@variables('quote')"
+                    },
+                    "statusCode": 200
+                },
+                "kind": "Http",
+                "runAfter": {
+                    "Get_image_url_from_JSON_Response": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Response"
+            },
+            "Set_quote": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "quote",
+                            "type": "string",
+                            "value": "@{body('Parse_quote_from_JSON_Response')?['choices'][0]['message']['content']} - Azure OpenAI"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Parse_quote_from_JSON_Response": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Until": {
+                "actions": {
+                    "Delay": {
+                        "inputs": {
+                            "interval": {
+                                "count": 1,
+                                "unit": "Second"
+                            }
+                        },
+                        "runAfter": {
+                            "Parse_image_response_JSON": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Wait"
+                    },
+                    "Get_image": {
+                        "inputs": {
+                            "headers": {
+                                "Api-Key": "@variables('openai-key')",
+                                "Content-Type": "application/json"
+                            },
+                            "method": "GET",
+                            "uri": "@{variables('openai-endpoint')}/openai/operations/images/@{body('Get_image_id_from_JSON_Response')?['id']}?api-version=2023-06-01-preview"
+                        },
+                        "runAfter": {},
+                        "type": "Http"
+                    },
+                    "Parse_image_response_JSON": {
+                        "inputs": {
+                            "content": "@body('Get_image')",
+                            "schema": {
+                                "properties": {
+                                    "created": {
+                                        "type": "integer"
+                                    },
+                                    "expires": {
+                                        "type": "integer"
+                                    },
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "result": {
+                                        "properties": {
+                                            "created": {
+                                                "type": "integer"
+                                            },
+                                            "data": {
+                                                "items": {
+                                                    "properties": {
+                                                        "url": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "url"
+                                                    ],
+                                                    "type": "object"
+                                                },
+                                                "type": "array"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "runAfter": {
+                            "Get_image": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ParseJson"
+                    }
+                },
+                "expression": "@equals(body('Parse_image_response_JSON')?['status'], 'succeeded')",
+                "limit": {
+                    "count": 60,
+                    "timeout": "PT1H"
+                },
+                "runAfter": {
+                    "Get_image_id_from_JSON_Response": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Until"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {},
+        "triggers": {
+            "CreateQuote": {
+                "inputs": {
+                    "schema": {
+                        "properties": {
+                            "keywords": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {}
+}

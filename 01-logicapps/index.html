@@ -1,0 +1,110 @@
+<!DOCTYPE html>      
+<html>      
+<head>      
+	<title>Quote generator</title>      
+	<style>      
+		body {      
+			background-size: cover;    
+			background-position: center;    
+			background-repeat: no-repeat;    
+			height: 100vh;    
+			margin: 0;    
+			display: flex;    
+			align-items: center;    
+			justify-content: center;    
+			text-align: center;   
+			text-shadow: -1px 1px 2px #000,
+				  1px 1px 2px #000,
+				  1px -1px 0 #000,
+				  -1px -1px 0 #000; 
+			color: white;    
+			font-size: 3em;    
+		}      
+  
+		.form-container {  
+			position: absolute;  
+			top: 0;  
+			left: 0;  
+			right: 0;  
+			background-color: #333;  
+			padding: 20px;  
+			display: flex;  
+			align-items: center;  
+			justify-content: center;  
+			z-index: 999;  
+		}  
+  
+		.form-container input[type="text"] {  
+			padding: 10px;  
+			width: 600px;  
+			margin-right: 10px;  
+			font-size: 1.2em;  
+			border: none;  
+			border-radius: 5px;  
+		}  
+  
+		.form-container button {  
+			padding: 10px;  
+			font-size: 1.2em;  
+			background-color: #fff;  
+			color: #333;  
+			border: none;  
+			border-radius: 5px;  
+			cursor: pointer;  
+		}  
+	</style>      
+</head>      
+<body id="quote_area">      
+	<div class="form-container">  
+		<input type="text" id="keywords_input" placeholder="Comma-separated keywords">  
+		<button type="button" id="submit_button">Build</button>  
+	</div>  
+  
+	<div>      
+		<p id="quote_text"></p>      
+	</div>      
+    
+	<script type="text/javascript">    
+		async function callLogicApp(keywordsValue) {    
+			const apiURL = '<LOGIC_APP_URL>';    
+  
+			const requestBody = {    
+  				keywords: keywordsValue    
+  			};    
+  
+  			const response = await fetch(apiURL, {    
+				method: "POST",    
+			  	body: JSON.stringify(requestBody),    
+			  	headers: {    
+			    	"Content-type": "application/json"    
+			  	}    
+			});    
+			    
+			const quoteAndImage = await response.json();    
+			return quoteAndImage;    
+		}    
+    
+		function fetchQuoteAndImage(keywords){    
+			var elquote = document.getElementById('quote_text');    
+			elquote.innerHTML = 'Building your quote...';    
+			
+			callLogicApp(keywords).then(jsonResponse => {    
+				var el = document.getElementById('quote_area');    
+				el.style.backgroundImage = "url("+jsonResponse.image+")";    	
+				elquote.innerHTML = jsonResponse.quote;    
+    
+				console.log(jsonResponse.quote);    
+				console.log(jsonResponse.image);     
+			});    
+		}    
+  
+		document.getElementById('submit_button').addEventListener('click', function() {  
+			var keywordsInput = document.getElementById('keywords_input');  
+			if (keywordsInput.value) {  
+				fetchQuoteAndImage(keywordsInput.value);  
+			}  
+		});  
+		    
+	</script>    
+</body>      
+</html>    

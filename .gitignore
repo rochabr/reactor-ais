@@ -3,3 +3,4 @@ obj
 appsettings.json
 local.settings.json
 workflow-designtime/
+.hintrc
