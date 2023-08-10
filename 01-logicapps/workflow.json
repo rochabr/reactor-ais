@@ -12,7 +12,7 @@
                                 "role": "system"
                             },
                             {
-                                "content": "Please create an original inpirational quote for me using the following keywords: @{triggerBody()?['keywords']}. It has to be created by you and not from an author. Don't explain what you are doing, just send me the quote.",
+                                "content": "Please create an original inpirational quote for me using the following keywords: @{triggerBody()?['keywords']}. It has to be created by you and not from an author. Make sure you create the quote basaed on the language captured from the keywords. Don't explain what you are doing, just send me the quote.",
                                 "role": "user"
                             }
                         ]
