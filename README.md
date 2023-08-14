@@ -1,4 +1,4 @@
-# Reacor - Level Up with Azure Integration Services
+# Reactor - Level Up with Azure Integration Services
 
 - 01 - Azure Logic apps: [Build a quote generator with Azure Logic Apps and Azure OpenAI’s ChatGPT and DALL·E](/01-logicapps).
 - 02 - Azure Service Bus:
