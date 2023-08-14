@@ -77,7 +77,7 @@ To call our model via REST API from the Logic App, we need to copy the endpoint 
    
 ## Hosting your web site with Azure Static Web App
 
-We will now create a simple HTML file with the content that will allow us to call the Logic App.
+We will create a very simple website to host an HTML file, connected to a new GitHub repository. For a more detailed tutorial on how to deploy static web apps using popular frameworks like Angular, Blazor, React and Vue, or to connect to an Azure DevOps repository, follow [this guide](https://learn.microsoft.com/en-us/azure/static-web-apps/get-started-portal?tabs=vanilla-javascript&pivots=github).
 
 ### Create new GitHub repository to host our HTML file
 
@@ -87,17 +87,13 @@ We will now create a simple HTML file with the content that will allow us to cal
 
 ### Connect your repo with an Azure Static Web App
 
-In this tutorial, we will create a very simple website to host the HTML file with no framework, connecting to the GitHub repo created in the step above. For a more detailed tutorial on how to deploy static web apps using popular frameworks, like Angular, Blazor, React and Vue, or to connect to an Azure DevOps repository, follow [this guide](https://learn.microsoft.com/en-us/azure/static-web-apps/get-started-portal?tabs=vanilla-javascript&pivots=github).
-
 1. Go to the [Azure portal](https://portal.azure.com).
-1. Select **Create a Resource**.
-1. Search for **Static Web Apps**.
-1. Select **Static Web Apps**.
-1. Select **Create**.
+2. Select **Create a Resource**.
+3. Search for **Static Web Apps**.
+4. Select **Static Web Apps**.
+5. Select **Create**.
 
 In the _Basics_ section, begin by configuring your new app and linking it to a GitHub repository.
-
-:::image type="content" source="media/getting-started-portal/quickstart-portal-basics.png" alt-text="Basics section":::
 
 | Setting | Value |
 |--|--|
