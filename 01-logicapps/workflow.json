@@ -270,7 +270,7 @@
                         {
                             "name": "quote",
                             "type": "string",
-                            "value": "@{body('Parse_quote_from_JSON_Response')?['choices'][0]['message']['content']} - Azure OpenAI"
+                            "value": "@{body('Parse_quote_from_JSON_Response')?['choices'][0]['message']['content']}"
                         }
                     ]
                 },
