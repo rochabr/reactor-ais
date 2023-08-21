@@ -1,5 +1,1 @@
 azure-servicebus
-applicationinsights
-openai
-asyncio
-opencensus-ext-azure
