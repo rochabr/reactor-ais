@@ -1,21 +1,26 @@
-# Create resource group 
+
+# Create Azure resources
+
+## Create resource group 
 
 ```bash
 az group create --name reactor-servicebus-rg --location eastus
 ```
 
-# Create namespace
+## Create Azure Service Bus Namespace
 
 ```bash
 az servicebus namespace create --resource-group reactor-servicebus-rg --name reactor-demo-sbus --location eastus
 ```
 
-# Create queue
+## Create queue
 ```bash
 az servicebus queue create --resource-group reactor-servicebus-rg --namespace-name reactor-demo-sbus --name orders-queue
 ```
 
-# Setup Connection String and Queue name
+# Setup Python environment and files
+
+## Setup Connection String and Queue name
 
 ```bash
 RES_GROUP=reactor-servicebus-rg
@@ -26,7 +31,7 @@ export SERVICEBUS_CONN_STR=$(az servicebus namespace authorization-rule keys lis
 export SERVICE_BUS_QUEUE_NAME=orders-queue
 ```
 
-# Install dependencies
+## Install dependencies
 
 ```bash
 pip install azure-servicebus
@@ -76,3 +81,19 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             # If it is desired to halt receiving early, one can break out of the loop here safely.
 
 ```
+
+# Running the demo
+
+First, run *sender.py* to send messages to the queue.
+
+```bash
+python sender.py
+```
+
+Then, run *receiver.py* to receive messages from the queue.
+
+```bash
+python receiver.py
+```
+
+On the Azure Portal, open your Azure Service bus instance and Queue. Navigate to _Service Bus Explorer_ to see the messages being consumed and sent in real-time.
