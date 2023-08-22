@@ -90,5 +90,5 @@ On the Azure Portal, open your Azure Service bus instance and Queue. Navigate to
 
 # Cleanup resources
 ```bash
-az group delete --name exampleGroup
+az group delete --name $RESOURCE_GROUP
 ```
