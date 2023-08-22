@@ -87,3 +87,8 @@ python receiver.py
 ```
 
 On the Azure Portal, open your Azure Service bus instance and Queue. Navigate to _Service Bus Explorer_ to see the messages being consumed and sent in real-time.
+
+# Cleanup resources
+```bash
+az group delete --name exampleGroup
+```
