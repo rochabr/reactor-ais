@@ -1,38 +1,24 @@
 # Create Azure resources
 
-## Setup variables
-
-```bash
-RES_GROUP=<resource group name>
-NAMESPACE_NAME=<service bus namespace name>
-SB_LOCATION=eastus
-
-export SERVICE_BUS_QUEUE_NAME=<queue name>
-```
-
-## Create resource group 
-
-```bash
-az group create --name $RES_GROUP --location $SB_LOCATION
-```
-
-## Create Azure Service Bus Namespace
-
-```bash
-az servicebus namespace create --resource-group $RES_GROUP --name $NAMESPACE_NAME --location $SB_LOCATION
-```
-
-## Create queue
-```bash
-az servicebus queue create --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name $SERVICE_BUS_QUEUE_NAME
-```
+1. Clone the repo locally
+2. Run
+   ```bash
+   cd reactor-ais/02-servicebus
+   ```
+3. Update _infra.azcli_ with your resource group name, namespace name, location and queue name.
+4. Run
+   ```bash
+   . infra.cli
+   ```
+After the environment is created, move to the next step.
 
 # Setup Python environment and files
 
 ## Setup Connection String
 
 ```bash
-export SERVICEBUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
+export SERVICEBUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RESOURCE_GROUP --namespace-name $NAMESPACE_NAME --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
+export QUEUE_NAME=$QUEUE_NAME
 ```
 
 ## Install dependencies
@@ -49,7 +35,7 @@ from azure.servicebus import ServiceBusClient, ServiceBusMessage
 import os
 
 connstr = os.environ["SERVICEBUS_CONN_STR"]
-queue_name = os.environ["SERVICE_BUS_QUEUE_NAME"]
+queue_name = os.environ["QUEUE_NAME"]
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_sender(queue_name) as sender:
@@ -60,7 +46,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
         # Sending a list of messages
         messages = [
             ServiceBusMessage("Day 1 - Logic Apps"),
-            ServiceBusMessage("Da 2 - Service Bus"),
+            ServiceBusMessage("Day 2 - Service Bus"),
         ]
         sender.send_messages(messages)
 ```
