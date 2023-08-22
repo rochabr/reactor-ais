@@ -59,7 +59,7 @@ from azure.servicebus import ServiceBusClient
 import os
 
 connstr = os.environ["SERVICEBUS_CONN_STR"]
-queue_name = os.environ["SERVICE_BUS_QUEUE_NAME"]
+queue_name = os.environ["QUEUE_NAME"]
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     # max_wait_time specifies how long the receiver should wait with no incoming messages before stopping receipt.
