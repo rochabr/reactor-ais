@@ -15,7 +15,7 @@ az servicebus namespace create --resource-group reactor-servicebus-rg --name rea
 az servicebus queue create --resource-group reactor-servicebus-rg --namespace-name reactor-demo-sbus --name orders-queue
 ```
 
-# Setup Connection String and queue name
+# Setup Connection String and Queue name
 
 ```bash
 RES_GROUP=reactor-servicebus-rg
@@ -26,7 +26,13 @@ export SERVICEBUS_CONN_STR=$(az servicebus namespace authorization-rule keys lis
 export SERVICE_BUS_QUEUE_NAME=orders-queue
 ```
 
-# Sender.py
+# Install dependencies
+
+```bash
+pip install azure-servicebus
+```
+
+## Create sender.py
 
 ```python
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
@@ -39,18 +45,18 @@ queue_name = os.environ["SERVICE_BUS_QUEUE_NAME"]
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_sender(queue_name) as sender:
         # Sending a single message
-        single_message = ServiceBusMessage("Single message")
+        single_message = ServiceBusMessage("Hello, Reactor!")
         sender.send_messages(single_message)
 
         # Sending a list of messages
         messages = [
-            ServiceBusMessage("First message"),
-            ServiceBusMessage("Second message"),
+            ServiceBusMessage("Day 1 - Logic Apps"),
+            ServiceBusMessage("Da 2 - Service Bus"),
         ]
         sender.send_messages(messages)
 ```
 
-# Receiver.py
+## Create receiver.py
 
 ```python
 from azure.servicebus import ServiceBusClient
@@ -68,4 +74,5 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             print(str(msg))
             # receiver.complete_message(msg)
             # If it is desired to halt receiving early, one can break out of the loop here safely.
+
 ```
