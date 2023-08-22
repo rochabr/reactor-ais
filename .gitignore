@@ -17,3 +17,4 @@ workflow-designtime/
 # Built Visual Studio Code Extensions
 *.vsix
 .DS_Store
+.vscode
