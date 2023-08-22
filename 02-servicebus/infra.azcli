@@ -1,0 +1,14 @@
+# Setup variables
+RESOURCE_GROUP=<resource group name>
+NAMESPACE_NAME=<service bus namespace name>
+SB_LOCATION=<location ie:eastus>
+QUEUE_NAME=<queue name>
+
+# Create resource group
+az group create --name $RESOURCE_GROUP --location $SB_LOCATION
+
+# Create Azure Service Bus namespace
+az servicebus namespace create --resource-group $RESOURCE_GROUP --name $NAMESPACE_NAME --location $SB_LOCATION
+
+# Create queue
+az servicebus queue create --resource-group $RESOURCE_GROUP --namespace-name $NAMESPACE_NAME --name $QUEUE_NAME
