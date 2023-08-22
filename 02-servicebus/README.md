@@ -1,34 +1,38 @@
-
 # Create Azure resources
+
+## Setup variables
+
+```bash
+RES_GROUP=<resource group name>
+NAMESPACE_NAME=<service bus namespace name>
+SB_LOCATION=eastus
+
+export SERVICE_BUS_QUEUE_NAME=<queue name>
+```
 
 ## Create resource group 
 
 ```bash
-az group create --name reactor-servicebus-rg --location eastus
+az group create --name $RES_GROUP --location $SB_LOCATION
 ```
 
 ## Create Azure Service Bus Namespace
 
 ```bash
-az servicebus namespace create --resource-group reactor-servicebus-rg --name reactor-demo-sbus --location eastus
+az servicebus namespace create --resource-group $RES_GROUP --name $NAMESPACE_NAME --location $SB_LOCATION
 ```
 
 ## Create queue
 ```bash
-az servicebus queue create --resource-group reactor-servicebus-rg --namespace-name reactor-demo-sbus --name orders-queue
+az servicebus queue create --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name $SERVICE_BUS_QUEUE_NAME
 ```
 
 # Setup Python environment and files
 
-## Setup Connection String and Queue name
+## Setup Connection String
 
 ```bash
-RES_GROUP=reactor-servicebus-rg
-NAMESPACE_NAME=reactor-demo-sbus
-
 export SERVICEBUS_CONN_STR=$(az servicebus namespace authorization-rule keys list --resource-group $RES_GROUP --namespace-name $NAMESPACE_NAME --name RootManageSharedAccessKey --query primaryConnectionString --output tsv)
-
-export SERVICE_BUS_QUEUE_NAME=orders-queue
 ```
 
 ## Install dependencies
