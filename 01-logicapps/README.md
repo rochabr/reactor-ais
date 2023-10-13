@@ -123,9 +123,9 @@ After you sign in with GitHub, enter the repository information.
 In the _Build Details_ section, add configuration details specific to your preferred front-end framework.
 
 1. Select **Custom** from the _Build Presets_ dropdown.
-2. Type **./src** in the _App location_ box.
+2. Type **/** in the _App location_ box.
 3. Leave the _Api location_ box empty.
-4. Type **./src** _App artifact location_ box.
+4. Type **/** _App artifact location_ box.
 
 Select **Review + create**.
 
