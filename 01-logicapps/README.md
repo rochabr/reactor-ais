@@ -137,14 +137,10 @@ Before you can go to your new static site, the deployment build must first finis
 
 The Static Web Apps *Overview* window displays a series of links that help you interact with your web app.
 
-![image](https://github.com/rochabr/openai-logicapp-quotecreator/assets/1051195/dff933b9-8bbf-4d2d-b163-4de7daaaffb3)
-
 1. Selecting on the banner that says, _Select here to check the status of your GitHub Actions runs_ takes you to the GitHub Actions running against your repository. Once you verify the deployment job is complete, then you can go to your website via the generated URL.
 2. Once GitHub Actions workflow is complete, you can select the _URL_ link to open the website in new tab.
 3. Add comma-separated keywords in the input box and click *Build*.
 4. After a few seconds, you'll see your quote with a related image in the background.
-
-![IMG_4ECA5F7CED96-1](https://github.com/rochabr/openai-logicapp-quotecreator/assets/1051195/ae1063a9-6cdd-4f32-ba88-dfe731e5403a)
 
 ## Production considerations
 
